@@ -11,8 +11,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  // url      = env("DATABASE_URL")
-  url      = "mysql://root:password@db:3306/job_board_db" //hardcoding the docker sql link
+  url      = env("DATABASE_URL")
 }
 
 model Job {
