@@ -1,0 +1,308 @@
+openapi: 3.0.0
+info:
+  title: Job Board API
+  description: API for managing job postings with search and filter capabilities
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: Default server
+
+components:
+  schemas:
+    Job:
+      type: object
+      required:
+        - title
+        - company
+        - location
+        - salary
+        - description
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        title:
+          type: string
+          example: "Senior Software Engineer"
+        company:
+          type: string
+          example: "Tech Corp"
+        location:
+          type: string
+          example: "New York, NY"
+        salary:
+          type: string
+          example: "$120,000 - $150,000"
+        description:
+          type: string
+          example: "We are looking for a senior software engineer..."
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+    
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+
+paths:
+  /jobs:
+    get:
+      summary: Get all jobs
+      description: Retrieve a list of all job postings
+      responses:
+        '200':
+          description: List of jobs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    post:
+      summary: Create a new job
+      description: Create a new job posting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job'
+      responses:
+        '201':
+          description: Job created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /jobs/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+        description: Job ID
+    
+    get:
+      summary: Get a job by ID
+      description: Retrieve a specific job posting by its ID
+      responses:
+        '200':
+          description: Job retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      summary: Update a job
+      description: Update an existing job posting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job'
+      responses:
+        '200':
+          description: Job updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    patch:
+      summary: Partially update a job
+      description: Update specific fields of an existing job posting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                company:
+                  type: string
+                location:
+                  type: string
+                salary:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Job updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '404':
+          description: Job not found
+        '500':
+          description: Server error
+    
+    delete:
+      summary: Delete a job
+      description: Delete an existing job posting
+      responses:
+        '204':
+          description: Job deleted successfully
+        '404':
+          description: Job not found
+        '500':
+          description: Server error
+
+  /jobs/search:
+    get:
+      summary: Search jobs
+      description: Search for jobs with case-insensitive matching
+      parameters:
+        - name: title
+          in: query
+          schema:
+            type: string
+          description: Job title to search for
+        - name: company
+          in: query
+          schema:
+            type: string
+          description: Company name to search for
+        - name: location
+          in: query
+          schema:
+            type: string
+          description: Location to search for
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+        '500':
+          description: Server error
+
+  /jobs/filters:
+    get:
+      summary: Filter jobs
+      description: Filter jobs by salary and location
+      parameters:
+        - name: salary
+          in: query
+          schema:
+            type: string
+          description: Salary range to filter by
+        - name: location
+          in: query
+          schema:
+            type: string
+          description: Location to filter by
+      responses:
+        '200':
+          description: Filtered results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+        '500':
+          description: Server error
+
+  /jobs/stats:
+    get:
+      summary: Get job statistics
+      description: Get statistics about job postings
+      responses:
+        '200':
+          description: Statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalJobs:
+                    type: integer
+                  recentJobs:
+                    type: integer
+                  lastUpdated:
+                    type: string
+                    format: date-time
+        '500':
+          description: Server error
+
+  /jobs/latest:
+    get:
+      summary: Get latest jobs
+      description: Get the 5 most recent job postings
+      responses:
+        '200':
+          description: Latest jobs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+        '500':
+          description: Server error
