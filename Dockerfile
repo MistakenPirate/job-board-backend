@@ -10,7 +10,7 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the application code, including openapi.yaml and index.ts
+# Copy the rest of the application code, including openapi.yaml, index.ts, and .env
 COPY . .
 
 # Install Prisma client and generate it

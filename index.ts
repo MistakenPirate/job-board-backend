@@ -9,6 +9,9 @@ const app = express();
 
 app.use(express.json());
 
+console.log(process.env.DATABASE_URL);
+
+
 //swagger ui
 const swaggerDocument = YAML.load(path.join(__dirname, './openapi.yaml'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
