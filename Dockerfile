@@ -19,6 +19,9 @@ RUN npx prisma generate
 # Build the TypeScript files into JavaScript (dist folder)
 RUN npm run build
 
+# Copy openapi.yaml into the dist folder
+RUN cp openapi.yaml dist/
+
 # Expose the application port (default is 3000)
 EXPOSE 3000
 
