@@ -16,8 +16,6 @@ A RESTful API for managing job postings built with Express.js, TypeScript, and M
 docker run --name mysql-job-board \
   -e MYSQL_ROOT_PASSWORD=rootpassword \
   -e MYSQL_DATABASE=jobsdb \
-  -e MYSQL_USER=user \
-  -e MYSQL_PASSWORD=password \
   -p 3306:3306 \
   -d mysql:8.0
 ```
@@ -27,7 +25,7 @@ docker run --name mysql-job-board \
 Create a `.env` file in the project root:
 
 ```env
-DATABASE_URL="mysql://user:password@localhost:3306/jobsdb"
+DATABASE_URL="mysql://root:rootpassword@localhost:3306/jobsdb"
 PORT=3000
 ```
 
